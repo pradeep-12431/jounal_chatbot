@@ -1,12 +1,17 @@
 import React from "react";
-import axios from "../api"; // ⭐ FIX: Import your configured axios instance
+import axios from "../api"; // Import your configured axios instance
 
 const RazorpayButton = ({ userId, plan }) => {
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
       script.src = "[https://checkout.razorpay.com/v1/checkout.js](https://checkout.razorpay.com/v1/checkout.js)";
-      script.onload = () => resolve(true);
+      script.onload = () => {
+        // ⭐ IMPORTANT: Add a small delay to ensure window.Razorpay is fully initialized ⭐
+        setTimeout(() => {
+          resolve(true);
+        }, 100); // Wait for 100ms
+      };
       script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
@@ -15,27 +20,29 @@ const RazorpayButton = ({ userId, plan }) => {
   const handlePayment = async () => {
     const res = await loadRazorpayScript();
     if (!res) {
-      // Using a custom message box instead of alert()
-      // You'd need to implement a simple modal/div for this
       console.error("Razorpay SDK failed to load.");
       // IMPORTANT: Replace alert with a custom modal/message box in a real app
       alert("Razorpay SDK failed to load. Please try again.");
       return;
     }
 
+    // ⭐ Check if window.Razorpay is available after loading ⭐
+    if (typeof window.Razorpay === 'undefined') {
+      console.error("window.Razorpay is not defined after script load. Timing issue?");
+      alert("Payment system not ready. Please try again in a moment.");
+      return;
+    }
+
     try {
-      // ⭐ FIX: Use the configured axios instance for create-order ⭐
+      // Call backend to create Razorpay order
       const orderResponse = await axios.post("/subscribe/create-order", {
         plan,
         userId,
       });
 
-      // Correctly destructure orderId and amount directly from data
       const { orderId, amount } = orderResponse.data;
 
       const options = {
-        // ⭐ IMPORTANT: Use environment variable for Razorpay Key ID ⭐
-        // This should be REACT_APP_RAZORPAY_KEY_ID from your Netlify env variables
         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
         amount: amount,
         currency: "INR",
@@ -43,28 +50,23 @@ const RazorpayButton = ({ userId, plan }) => {
         description: `${plan} Subscription`,
         order_id: orderId,
         handler: async function (response) {
-          // On successful payment, notify backend to activate subscription
           try {
-            // ⭐ FIX: Use the configured axios instance for verify ⭐
             await axios.post("/subscribe/verify", {
               ...response,
               userId,
               plan,
             });
-            // IMPORTANT: Replace alert with a custom modal/message box in a real app
             console.log("Payment successful and subscription activated!");
             alert("✅ Payment successful and subscription activated!");
             // You might want to refetch subscription status here
             // e.g., window.location.reload() or call a prop function to update parent state
           } catch (verifyErr) {
             console.error("Error verifying payment:", verifyErr);
-            // IMPORTANT: Replace alert with a custom modal/message box in a real app
             alert("❌ Payment verification failed.");
           }
         },
         prefill: {
-          // ⭐ Consider dynamically prefilling user email from localStorage/context ⭐
-          email: "user@example.com", // You might want to dynamically get the user's email here
+          email: "user@example.com", // Dynamically get the user's email here if available
         },
         theme: {
           color: "#3399cc",
@@ -75,7 +77,6 @@ const RazorpayButton = ({ userId, plan }) => {
       rzp.open();
     } catch (err) {
       console.error("Failed to create Razorpay order:", err);
-      // IMPORTANT: Replace alert with a custom modal/message box in a real app
       alert("❌ Failed to create payment order. Please try again.");
     }
   };
