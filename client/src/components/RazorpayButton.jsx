@@ -3,37 +3,50 @@ import axios from "../api"; // Import your configured axios instance
 
 const RazorpayButton = ({ userId, plan }) => {
   const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = "[https://checkout.razorpay.com/v1/checkout.js](https://checkout.razorpay.com/v1/checkout.js)";
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true; // Add async attribute for better loading
+      script.defer = true; // Add defer attribute
+
       script.onload = () => {
-        // ⭐ IMPORTANT: Add a small delay to ensure window.Razorpay is fully initialized ⭐
+        console.log("Razorpay script loaded successfully.");
+        // Give it a very small moment, but rely more on direct check
         setTimeout(() => {
-          resolve(true);
-        }, 100); // Wait for 100ms
+          if (typeof window.Razorpay !== 'undefined') {
+            resolve(true);
+          } else {
+            console.error("Razorpay script loaded, but window.Razorpay is still undefined.");
+            reject(new Error("Razorpay object not found after script load."));
+          }
+        }, 50); // Small delay
       };
-      script.onerror = () => resolve(false);
+
+      script.onerror = (e) => {
+        console.error("Razorpay script failed to load:", e);
+        reject(new Error("Razorpay SDK failed to load."));
+      };
+
       document.body.appendChild(script);
     });
   };
 
   const handlePayment = async () => {
-    const res = await loadRazorpayScript();
-    if (!res) {
-      console.error("Razorpay SDK failed to load.");
-      // IMPORTANT: Replace alert with a custom modal/message box in a real app
-      alert("Razorpay SDK failed to load. Please try again.");
-      return;
-    }
-
-    // ⭐ Check if window.Razorpay is available after loading ⭐
-    if (typeof window.Razorpay === 'undefined') {
-      console.error("window.Razorpay is not defined after script load. Timing issue?");
-      alert("Payment system not ready. Please try again in a moment.");
-      return;
-    }
-
     try {
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        console.error("Razorpay SDK failed to load completely.");
+        alert("Razorpay SDK failed to load. Please try again.");
+        return;
+      }
+
+      // Final check before using Razorpay
+      if (typeof window.Razorpay === 'undefined') {
+        console.error("window.Razorpay is still not defined after script load attempt.");
+        alert("Payment system not ready. Please try again in a moment.");
+        return;
+      }
+
       // Call backend to create Razorpay order
       const orderResponse = await axios.post("/subscribe/create-order", {
         plan,
@@ -59,7 +72,6 @@ const RazorpayButton = ({ userId, plan }) => {
             console.log("Payment successful and subscription activated!");
             alert("✅ Payment successful and subscription activated!");
             // You might want to refetch subscription status here
-            // e.g., window.location.reload() or call a prop function to update parent state
           } catch (verifyErr) {
             console.error("Error verifying payment:", verifyErr);
             alert("❌ Payment verification failed.");
