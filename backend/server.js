@@ -17,7 +17,7 @@ const port = process.env.PORT || 5050;
 const corsOptions = {
     // ⭐ Replace 'https://journals-chatbot-dailydiary-app.netlify.app' with your EXACT Netlify frontend URL
     // And keep 'http://localhost:5173' if that's where you run your local frontend for testing.
-    origin: ['https://journals-chatbot-dailydiary-app.netlify.app', 'http://localhost:5173'],
+    origin: ['https://journal-chatbot-dailydiary-app.netlify.app', 'http://localhost:5173'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // IMPORTANT: Allows cookies, authorization headers, etc.
     optionsSuccessStatus: 204 // Some legacy browsers (IE11, various SmartTVs) choke on 200
