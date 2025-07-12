@@ -1,11 +1,11 @@
 import React from "react";
-import axios from "axios";
+import axios from "../api"; // ⭐ FIX: Import your configured axios instance
 
 const RazorpayButton = ({ userId, plan }) => {
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.src = "[https://checkout.razorpay.com/v1/checkout.js](https://checkout.razorpay.com/v1/checkout.js)";
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
       document.body.appendChild(script);
@@ -18,13 +18,14 @@ const RazorpayButton = ({ userId, plan }) => {
       // Using a custom message box instead of alert()
       // You'd need to implement a simple modal/div for this
       console.error("Razorpay SDK failed to load.");
-      alert("Razorpay SDK failed to load. Please try again."); // Fallback for now
+      // IMPORTANT: Replace alert with a custom modal/message box in a real app
+      alert("Razorpay SDK failed to load. Please try again.");
       return;
     }
 
     try {
-      // Call backend to create Razorpay order
-      const orderResponse = await axios.post("http://localhost:5050/api/subscribe/create-order", {
+      // ⭐ FIX: Use the configured axios instance for create-order ⭐
+      const orderResponse = await axios.post("/subscribe/create-order", {
         plan,
         userId,
       });
@@ -33,29 +34,36 @@ const RazorpayButton = ({ userId, plan }) => {
       const { orderId, amount } = orderResponse.data;
 
       const options = {
-        key: "rzp_test_ccYr2nYANnKWJi", // replace with your actual Razorpay key
-        amount: amount, // Use the directly destructured amount
+        // ⭐ IMPORTANT: Use environment variable for Razorpay Key ID ⭐
+        // This should be REACT_APP_RAZORPAY_KEY_ID from your Netlify env variables
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+        amount: amount,
         currency: "INR",
         name: "Mental Health Journal",
         description: `${plan} Subscription`,
-        order_id: orderId, // Use the directly destructured orderId
+        order_id: orderId,
         handler: async function (response) {
           // On successful payment, notify backend to activate subscription
           try {
-            await axios.post("http://localhost:5050/api/subscribe/verify", {
+            // ⭐ FIX: Use the configured axios instance for verify ⭐
+            await axios.post("/subscribe/verify", {
               ...response,
               userId,
               plan,
             });
-            // Using a custom message box instead of alert()
+            // IMPORTANT: Replace alert with a custom modal/message box in a real app
             console.log("Payment successful and subscription activated!");
-            alert("✅ Payment successful and subscription activated!"); // Fallback for now
+            alert("✅ Payment successful and subscription activated!");
+            // You might want to refetch subscription status here
+            // e.g., window.location.reload() or call a prop function to update parent state
           } catch (verifyErr) {
             console.error("Error verifying payment:", verifyErr);
-            alert("❌ Payment verification failed."); // Fallback for now
+            // IMPORTANT: Replace alert with a custom modal/message box in a real app
+            alert("❌ Payment verification failed.");
           }
         },
         prefill: {
+          // ⭐ Consider dynamically prefilling user email from localStorage/context ⭐
           email: "user@example.com", // You might want to dynamically get the user's email here
         },
         theme: {
@@ -67,7 +75,8 @@ const RazorpayButton = ({ userId, plan }) => {
       rzp.open();
     } catch (err) {
       console.error("Failed to create Razorpay order:", err);
-      alert("❌ Failed to create payment order. Please try again."); // Fallback for now
+      // IMPORTANT: Replace alert with a custom modal/message box in a real app
+      alert("❌ Failed to create payment order. Please try again.");
     }
   };
 
