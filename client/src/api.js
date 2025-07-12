@@ -2,10 +2,10 @@
 import axios from "axios";
 
 console.log("✅ Loaded REACT_APP_API_BASE_URL:", process.env.REACT_APP_API_BASE_URL);
-if (!import.meta.env.VITE_API_BASE_URL) {
-  console.error("❌ VITE_API_BASE_URL is missing! Check your Netlify environment variables.");
-}
 
+if (!process.env.REACT_APP_API_BASE_URL) {
+  console.error("❌ REACT_APP_API_BASE_URL is missing! Check your Netlify env variables.");
+}
 const instance = axios.create({
   // ⭐ IMPORTANT: Use the environment variable for the deployed backend URL
   // This will be set on Netlify. It will be your Render backend URL.
