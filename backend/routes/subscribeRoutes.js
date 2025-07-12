@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
-const User = require("../models/user.js"); // ⭐ NEW: Added .js extension
+const User = require("../models/testUserModel.js.js"); // ⭐ NEW: Added .js extension
 
 require("dotenv").config();
 

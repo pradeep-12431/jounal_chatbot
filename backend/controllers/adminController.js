@@ -1,5 +1,5 @@
 // 📁 backend/controllers/adminController.js
-const User = require("../models/user");
+const User = require("../models/testUserModel.js");
 const Journal = require("../models/Journal");
 const DailyEntry = require("../models/DailyEntry");
 

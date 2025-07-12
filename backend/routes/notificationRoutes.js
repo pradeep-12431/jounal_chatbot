@@ -1,7 +1,7 @@
 // 📁 backend/routes/notificationRoutes.js
 const express = require("express");
 const admin = require("../firebase-admin"); // ⭐ Ensure this path is correct
-const User = require("../models/user");
+const User = require("../models/testUserModel.js");
 
 const router = express.Router();
 
