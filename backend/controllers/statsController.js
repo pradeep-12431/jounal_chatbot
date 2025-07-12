@@ -1,6 +1,6 @@
 // 📁 backend/controllers/statsController.js
 const mongoose = require("mongoose"); // ⭐ FIX: Import mongoose
-const User = require("../models/User");
+const User = require("../models/user");
 const Journal = require("../models/Journal");
 const DailyEntry = require("../models/DailyEntry");
 
