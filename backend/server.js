@@ -15,12 +15,25 @@ const chatbotRoutes = require("./routes/chatbotRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const dailyEntryRoutes = require("./routes/dailyEntryRoutes");
 const exportRoutes = require("./routes/exportRoutes");
-const statsRoutes = require("./routes/statsRoutes"); // ⭐ NEW: Import stats routes
+const statsRoutes = require("./routes/statsRoutes");
 
-dotenv.config();
+dotenv.config(); // Load environment variables from .env if running locally
 const app = express();
 
-app.use(cors());
+// ⭐ IMPORTANT CORS CONFIGURATION FOR DEPLOYMENT ⭐
+// Get the frontend URL from environment variables for production, fallback to localhost for development
+const frontendUrl = process.env.NODE_ENV === 'production'
+    ? process.env.FRONTEND_URL // This will be your Netlify URL (e.g., https://your-app.netlify.app)
+    : 'http://localhost:3000'; // Your local React dev server
+
+const corsOptions = {
+  origin: [frontendUrl, 'http://localhost:3000', 'http://localhost:5050'], // Allow your deployed frontend and local dev
+  credentials: true, // Allow cookies/headers to be sent
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
+// ⭐ END CORS CONFIGURATION ⭐
+
 app.use(express.json());
 
 // --- API Routes ---
@@ -32,7 +45,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/subscribe", subscribeRoutes);
 app.use("/api/daily-entries", dailyEntryRoutes);
 app.use("/api/export", exportRoutes);
-app.use("/api/stats", statsRoutes); // ⭐ NEW: Use stats routes
+app.use("/api/stats", statsRoutes);
 
 app.get("/ping", (req, res) => {
   res.send("pong");
@@ -57,8 +70,8 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB Connected");
-    app.listen(process.env.PORT, () =>
-      console.log(`✅ Server running on port ${process.env.PORT}`)
+    app.listen(process.env.PORT || 5050, () => // ⭐ Use process.env.PORT or fallback to 5050
+      console.log(`✅ Server running on port ${process.env.PORT || 5050}`)
     );
   })
   .catch((err) => console.error("❌ MongoDB Error:", err));

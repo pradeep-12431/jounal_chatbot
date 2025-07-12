@@ -7,3 +7,4 @@ const firebaseConfig = {
   appId: "1:126840674864:web:50dfef8bdcfcab83e46bf5",
   measurementId: "G-41X3PVC5WP"
 };
+https://jounal-chatbot-app-backend.onrender.com
