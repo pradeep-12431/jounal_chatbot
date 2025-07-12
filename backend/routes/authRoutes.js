@@ -3,7 +3,9 @@ const express = require("express");
 const router = express.Router();
 const { register, login } = require("../controllers/authController");
 const User = require("../models/testUserModel.js");
-
+router.get('/test', (req, res) => {
+    res.json({ msg: 'Auth route working' });
+  });
 // Register route
 router.post("/register", register);
 
