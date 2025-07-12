@@ -1,0 +1,240 @@
+/* 📁 frontend/src/styles/Chatbot.css */
+
+/* --- Base Chatbot Container (Full Screen Overlay for the Chatbot) --- */
+.chatbot-container-wrapper { /* Renamed for clarity, this will be the new full-screen overlay */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom right, #e0f2fe, #e8e0ff); /* Consistent with Journal.css */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it's on top */
+    animation: fadeIn 0.5s ease-out forwards;
+    padding: 1rem; /* Added for mobile spacing */
+    box-sizing: border-box;
+}
+
+/* --- Chatbot Card (The central chat window) --- */
+.chatbot-card {
+    background-color: #ffffff;
+    border-radius: 1.5rem; /* rounded-3xl */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); /* shadow-3xl */
+    width: 100%;
+    max-width: 40rem; /* max-w-2xl - adjusted for a slightly wider chat experience */
+    height: 90vh; /* Responsive height */
+    max-height: 48rem; /* Max height for larger screens */
+    display: flex;
+    flex-direction: column; /* Stacks header, messages, input vertically */
+    overflow: hidden; /* Important: Hides scrollbars for the main card, let messages scroll */
+    position: relative; /* For close button positioning */
+    animation: popIn 0.6s ease-out forwards;
+}
+
+/* --- Chatbot Header --- */
+.chatbot-header {
+    background: linear-gradient(to right, #4f46e5, #8b5cf6); /* indigo-700 to purple-800 */
+    color: white;
+    padding: 1rem 1.5rem; /* Slightly reduced padding */
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+    flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.chatbot-title {
+    font-size: 1.5rem; /* text-2xl - slightly smaller for header */
+    font-weight: 700; /* font-bold */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* space-x-2 */
+}
+
+/* Back to Journal Button (reused from your JSX for clarity) */
+.chatbot-header button {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 0.5rem; /* rounded-md */
+    padding: 0.5rem 1rem;
+    color: white;
+    font-size: 0.875rem; /* text-sm */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+.chatbot-header button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+.chatbot-header button:active {
+    transform: translateY(0);
+}
+
+
+/* --- Chat Messages Area --- */
+.chatbot-messages {
+    flex: 1; /* This makes the message area take up all available space */
+    overflow-y: auto; /* This makes the messages scroll independently */
+    padding: 1rem 1.5rem; /* Adjusted padding */
+    background: #f9fafb; /* Light background */
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: relative; /* Needed for the typing indicator positioning */
+}
+
+/* Individual message bubble styles */
+.chatbot-bubble { /* Renamed from .message-bubble for consistency */
+    padding: 0.8rem 1.2rem;
+    border-radius: 1.2rem; /* Slightly more rounded */
+    max-width: 75%; /* Slightly less max-width to allow more content per line */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); /* Softer shadow */
+    font-size: 0.95rem; /* Slightly smaller font for better fit */
+    line-height: 1.4;
+    animation: fadeIn 0.3s ease-out forwards;
+    word-wrap: break-word; /* Ensure long words break */
+    white-space: pre-wrap; /* Preserve whitespace and line breaks from backend */
+}
+
+.chatbot-bubble.user {
+    background-color: #e0f2fe; /* bg-blue-100 */
+    color: #1e40af; /* text-blue-800 */
+    align-self: flex-end; /* Align to the right */
+    border-bottom-right-radius: 0.5rem; /* Smoother corner on the "tail" side */
+    border-top-right-radius: 0.2rem; /* Make top-right sharper for user bubble */
+}
+
+.chatbot-bubble.bot {
+    background-color: #f3e8ff; /* bg-purple-100 */
+    color: #6b21a8; /* text-purple-800 */
+    align-self: flex-start; /* Align to the left */
+    border-bottom-left-radius: 0.5rem; /* Smoother corner on the "tail" side */
+    border-top-left-radius: 0.2rem; /* Make top-left sharper for bot bubble */
+}
+
+/* Typing indicator */
+.chatbot-bubble.typing {
+    background-color: #e2e8f0; /* bg-gray-200 */
+    color: #4a5568; /* text-gray-700 */
+    font-style: italic;
+    align-self: flex-start;
+    animation: pulse 1.5s infinite ease-in-out; /* Add a subtle pulse effect */
+}
+
+@keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}
+
+
+/* --- Chat Input Area (Fixed at the bottom) --- */
+.chatbot-input-area {
+    padding: 1rem 1.5rem; /* Padding consistent with messages */
+    background-color: #ffffff;
+    border-top: 1px solid #e2e8f0; /* Subtle border at the top */
+    display: flex;
+    align-items: center; /* Vertically align input and button */
+    gap: 0.75rem;
+    flex-shrink: 0; /* Prevent input area from shrinking */
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05); /* Stronger shadow to pop it out */
+    /* No need for position sticky/fixed here if the parent .chatbot-card is flex column with overflow hidden */
+}
+
+.chatbot-input-area input[type="text"] { /* Specific selector for input */
+    flex-grow: 1;
+    padding: 0.75rem 1.2rem; /* Adjusted padding for a taller input field */
+    border: 1px solid #cbd5e0;
+    border-radius: 9999px; /* Pill shape */
+    font-size: 1rem;
+    background-color: #f8fafc; /* Lighter background for input */
+    transition: all 0.2s ease-in-out;
+    min-height: 2.5rem; /* Ensure a minimum height for the input */
+}
+.chatbot-input-area input[type="text"]:focus {
+    outline: none;
+    border-color: #4f46e5; /* Primary color on focus */
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25); /* Glow effect on focus */
+    background-color: #ffffff; /* White background on focus */
+}
+.chatbot-input-area input[type="text"]::placeholder {
+    color: #94a3b8; /* Lighter placeholder text */
+}
+
+
+.chatbot-send-button { /* Specific selector for button */
+    background: linear-gradient(to right, #6366f1, #8b5cf6); /* Gradient background */
+    color: white;
+    padding: 0.75rem 1.5rem; /* More balanced padding */
+    border-radius: 9999px; /* Pill shape */
+    border: none;
+    font-size: 1rem;
+    font-weight: 600; /* Bolder text */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex; /* For potential icon + text alignment */
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.chatbot-send-button:hover {
+    background: linear-gradient(to right, #4f46e5, #7c3aed); /* Darker gradient on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* More prominent shadow on hover */
+}
+.chatbot-send-button:active {
+    transform: translateY(0); /* Return to original position on click */
+    box-shadow: none; /* Remove shadow on click */
+}
+.chatbot-send-button:disabled {
+    background: #cbd5e0; /* Gray out when disabled */
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+/* --- Animations (for consistency and pop) --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin { animation: spin 1s linear infinite; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .chatbot-card {
+        height: 100vh; /* Take full height on small screens */
+        border-radius: 0; /* No rounded corners on full screen */
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .chatbot-header {
+        border-radius: 0;
+        padding: 1rem;
+    }
+    .chatbot-messages {
+        padding: 0.75rem;
+    }
+    .chatbot-input-area {
+        padding: 0.75rem;
+    }
+    .chatbot-bubble {
+        max-width: 85%;
+    }
+}

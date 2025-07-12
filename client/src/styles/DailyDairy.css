@@ -1,0 +1,493 @@
+/* 📁 frontend/src/styles/DailyDiary.css */
+
+/* --- Base Daily Diary Container (Full Screen Overlay) --- */
+.diary-container-wrapper { /* Renamed for clarity */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom right, #f0f9ff, #eff6ff); /* Very light blue/white gradient */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease-out forwards;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+/* --- Daily Diary Book Card --- */
+.diary-book-card {
+    background-color: #fcfcfc; /* Off-white for page feel */
+    border-radius: 1rem; /* Softer rounded corners for a book */
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.25), /* Stronger central shadow */
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Multi-level shadow for depth */
+    width: 100%;
+    max-width: 75rem; /* Wider for the 'big book' feel */
+    height: 95vh; /* Take up more vertical space */
+    max-height: 55rem; /* Max height for very large screens */
+    display: flex;
+    flex-direction: column; /* Default to column for small screens */
+    overflow: hidden; /* Important for internal scrolling */
+    position: relative;
+    animation: popIn 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; /* More playful pop */
+    border: 1px solid #e0e7ff; /* Very subtle border for page edge */
+}
+
+/* --- Daily Diary Header --- */
+.diary-header {
+    background: linear-gradient(to right, #6d28d9, #9333ea); /* Deep purple to fuchsia */
+    color: white;
+    padding: 1.25rem 2rem; /* Adjusted padding */
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* More pronounced shadow */
+    flex-shrink: 0;
+}
+
+.diary-title {
+    font-size: 2.25rem; /* text-4xl - Bigger for impact */
+    font-weight: 800; /* Extra bold */
+    letter-spacing: -0.05em; /* Tighter letter spacing */
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
+}
+
+.diary-back-button {
+    background-color: rgba(255, 255, 255, 0.25);
+    border: none;
+    border-radius: 0.75rem; /* More rounded button */
+    padding: 0.6rem 1.2rem;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.diary-back-button:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.diary-back-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* --- Main Content Area (For Two-Column Layout) --- */
+.diary-content-area {
+    flex-grow: 1;
+    display: flex; /* Enables side-by-side columns */
+    overflow: hidden; /* Manages internal scrolling */
+    background-color: #fdfdfd; /* Very light background for pages */
+}
+
+/* --- Left Pane: Editor Area --- */
+.diary-editor-pane {
+    flex: 2; /* Takes 2 parts of the available space */
+    padding: 1.5rem 2rem; /* Generous padding */
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff; /* White background for the 'page' */
+    box-shadow: inset -5px 0 10px -5px rgba(0, 0, 0, 0.05); /* Inner shadow for page fold */
+    overflow-y: auto; /* Scrollable editor content */
+    border-right: 1px solid #e0e7ff; /* Subtle line simulating page division */
+}
+
+.editor-date-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed #e0e7ff; /* Dashed line for gentle separation */
+}
+
+.editor-date-nav button {
+    background-color: #e8d0ff; /* Lighter purple */
+    color: #6b21a8; /* Darker purple text */
+    padding: 0.6rem 1.2rem;
+    border-radius: 9999px; /* Pill shape */
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+.editor-date-nav button:hover {
+    background-color: #d8b4fe; /* Darker on hover */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.editor-date-nav button.today-button {
+    background: linear-gradient(to right, #8b5cf6, #a855f7);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.editor-date-nav button.today-button:hover {
+    background: linear-gradient(to right, #7c3aed, #9333ea);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.editor-current-date-display {
+    font-size: 1.75rem; /* text-3xl */
+    font-weight: 700;
+    color: #5b21b6; /* Deep purple */
+    text-align: center;
+}
+
+.entry-form-group {
+    margin-bottom: 1rem; /* Smaller gap in form */
+}
+
+.entry-form-group label {
+    display: block;
+    font-size: 0.9rem; /* Slightly smaller label */
+    font-weight: 600;
+    color: #6b7280; /* Gray-700 */
+    margin-bottom: 0.4rem;
+    font-family: 'Georgia', serif; /* Classic font for labels */
+}
+
+.entry-form-group input[type="text"],
+.entry-form-group textarea {
+    width: 100%;
+    padding: 0.8rem 1rem; /* Refined padding */
+    border: 1px solid #d1d5db; /* Lighter border */
+    border-radius: 0.5rem; /* Rounded corners */
+    font-size: 1rem;
+    background-color: #fafafa; /* Slightly off-white for input */
+    transition: all 0.2s ease-in-out;
+    font-family: 'Times New Roman', serif; /* Classic font for content */
+    line-height: 1.6; /* Comfortable line height */
+}
+
+.entry-form-group input[type="text"]:focus,
+.entry-form-group textarea:focus {
+    outline: none;
+    border-color: #a78bfa; /* Light purple focus */
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.3);
+    background-color: #ffffff;
+}
+
+.entry-form-group textarea {
+    min-height: 12rem; /* Taller textarea for more writing space */
+    resize: vertical;
+}
+
+.char-count {
+    text-align: right;
+    font-size: 0.75rem; /* text-xs */
+    color: #9ca3af; /* Gray-400 */
+    margin-top: 0.25rem;
+}
+
+.save-button {
+    background: linear-gradient(to right, #8b5cf6, #c084fc); /* Stronger gradient for save */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.save-button:hover {
+    background: linear-gradient(to right, #7c3aed, #a78bfa);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+.save-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+.save-button:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+    box-shadow: none;
+}
+
+.message-display {
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+.message-display.error { color: #dc2626; /* red-600 */ }
+.message-display.success { color: #16a34a; /* green-600 */ }
+
+
+/* --- Right Pane: History & Export --- */
+.diary-history-pane {
+    flex: 1; /* Takes 1 part of the available space */
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    background-color: #fefefe; /* Slightly whiter than left pane for contrast */
+    overflow-y: auto; /* Scrollable history content */
+    box-shadow: inset 5px 0 10px -5px rgba(0, 0, 0, 0.05); /* Inner shadow for page fold */
+}
+
+.history-section-title {
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: 700;
+    color: #5b21b6;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed #e0e7ff;
+}
+
+.export-buttons-group {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: center;
+    gap: 0.8rem; /* Tighter gap */
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed #e0e7ff;
+}
+
+.export-buttons-group button {
+    background-color: #8b5cf6; /* Main purple */
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.export-buttons-group button:hover {
+    background-color: #7c3aed;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.export-date-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #f3e8ff; /* Light purple background for the date picker */
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d8b4fe;
+}
+.export-date-selector input[type="date"] {
+    background: transparent;
+    border: none;
+    font-size: 0.9rem;
+    color: #6b21a8;
+    padding: 0.2rem;
+    outline: none;
+}
+.export-date-selector button {
+    background-color: #10b981; /* Green for export */
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    box-shadow: none; /* Remove extra shadow */
+}
+.export-date-selector button:hover {
+    background-color: #059669;
+    transform: none;
+    box-shadow: none;
+}
+
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem; /* Tighter gap for list items */
+}
+
+.history-entry-item {
+    background-color: #fafafa; /* Lighter background for items */
+    padding: 0.8rem 1.2rem;
+    border-radius: 0.6rem; /* Slightly rounded */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Softer shadow */
+    border: 1px solid #e0e7ff; /* Subtle border */
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer; /* Indicate clickable */
+}
+.history-entry-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f5f8ff; /* Slight highlight on hover */
+}
+
+.history-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+}
+
+.history-entry-title-date {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4c1d95; /* Deep purple for title */
+}
+
+.history-entry-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af; /* Gray for icons */
+    transition: color 0.2s ease-in-out;
+}
+.history-entry-actions button:hover {
+    color: #ef4444; /* Red for delete hover */
+}
+.history-entry-actions button.view-button {
+    color: #3b82f6; /* Blue for view icon */
+}
+.history-entry-actions button.view-button:hover {
+    color: #2563eb;
+}
+
+.history-entry-content-preview {
+    font-size: 0.9rem;
+    color: #6b7280;
+    white-space: nowrap; /* Keep content on single line */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis */
+}
+
+.no-entries-message {
+    text-align: center;
+    color: #9ca3af;
+    font-style: italic;
+    padding: 1rem;
+}
+
+
+/* --- Animations (Refined) --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin { animation: spin 1s linear infinite; }
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1024px) { /* Adjust for smaller desktops/large tablets */
+    .diary-book-card {
+        max-width: 60rem; /* Slightly narrower */
+        height: 90vh;
+    }
+    .diary-editor-pane, .diary-history-pane {
+        padding: 1.2rem 1.5rem;
+    }
+    .diary-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) { /* Tablet and Mobile */
+    .diary-book-card {
+        border-radius: 0; /* No rounded corners on full screen */
+        max-width: 100%;
+        max-height: 100%;
+        height: 100vh;
+        flex-direction: column; /* Stack editor and history vertically */
+        box-shadow: none; /* Remove shadows on full mobile view */
+    }
+    .diary-header {
+        border-radius: 0;
+        padding: 1rem 1.5rem;
+    }
+    .diary-title {
+        font-size: 1.75rem;
+        text-align: center;
+        flex-grow: 1; /* Allow title to take more space */
+    }
+    .diary-back-button {
+        position: absolute; /* Position back button top-left */
+        top: 1rem;
+        left: 1rem;
+        z-index: 10;
+        background-color: rgba(255, 255, 255, 0.1); /* Lighter on mobile header */
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .diary-content-area {
+        flex-direction: column; /* Stack panes vertically */
+        overflow-y: auto; /* Allow overall scrolling if content overflows */
+    }
+    .diary-editor-pane, .diary-history-pane {
+        width: 100%; /* Full width */
+        border-right: none; /* Remove vertical divider */
+        box-shadow: none; /* Remove inner shadows for page fold */
+        padding: 1rem;
+    }
+    .diary-editor-pane {
+        padding-bottom: 1.5rem; /* Add some space at the bottom of editor */
+        border-bottom: 1px dashed #e0e7ff; /* Add horizontal divider */
+    }
+
+    .editor-date-nav {
+        flex-wrap: wrap; /* Allow date buttons to wrap */
+        gap: 0.75rem;
+    }
+    .export-buttons-group {
+        flex-direction: column; /* Stack export buttons */
+        align-items: center;
+    }
+    .export-date-selector {
+        width: 100%; /* Full width date selector */
+        justify-content: space-between;
+    }
+}
+
+/* Optional: Scrollbar styling for a cleaner look */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d1d5db; /* Light gray thumb */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af; /* Darker gray on hover */
+}
