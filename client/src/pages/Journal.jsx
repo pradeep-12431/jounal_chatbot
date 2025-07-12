@@ -1,12 +1,12 @@
+// 📁 frontend/src/pages/Journal.jsx
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "../api";
+import axios from "../api"; // This is your configured axios instance
 import MoodChart from "../components/MoodChart";
 import RazorpayButton from "../components/RazorpayButton";
 import Chatbot from "../components/Chatbot";
 import DailyDiary from "../components/DailyDiary";
-import { Link } from "react-router-dom"; // Import Link for profile navigation
+import { Link } from "react-router-dom";
 
-// ⭐ NEW: Import the custom CSS file
 import '../styles/Journal.css';
 
 const Journal = () => {
@@ -138,17 +138,18 @@ const Journal = () => {
 
       if (newEntry.text) {
         try {
-          const feedbackRes = await axios.post("http://localhost:5050/api/journals/generate-feedback", { entryText: newEntry.text });
+          // ⭐ FIX: Use the configured axios instance for AI feedback ⭐
+          const feedbackRes = await axios.post("/journals/generate-feedback", { entryText: newEntry.text });
           newEntry.feedback = feedbackRes.data.feedback;
         } catch (feedbackErr) {
           console.error("Failed to generate AI feedback:", feedbackErr);
           newEntry.feedback = "AI feedback could not be generated.";
         }
       }
-      
+
       setEntries([newEntry, ...entries]);
-      setFormData({ mood: "", entry: "" });        
-    
+      setFormData({ mood: "", entry: "" });
+
     } catch (err) {
       console.error("Failed to save entry", err);
     }
@@ -183,7 +184,9 @@ const Journal = () => {
       return;
     }
     try {
-      window.open(`http://localhost:5050/api/export/journals/${userId}`, '_blank');
+      // ⭐ FIX: Use the configured axios instance's baseURL for export ⭐
+      // This will use REACT_APP_API_BASE_URL from your Netlify env
+      window.open(`${axios.defaults.baseURL}/export/journals/${userId}`, '_blank');
     } catch (error) {
       console.error("Error exporting journal data:", error);
       alert("Failed to export journal data.");
@@ -255,8 +258,9 @@ const Journal = () => {
             onClick={() => setShowUserDashboard(!showUserDashboard)}
             className="toggle-button dashboard"
           >
+            {/* ⭐ FIX: Corrected SVG path for the user dashboard icon ⭐ */}
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 11-18 0 9 9 0 0118 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{showUserDashboard ? 'Hide My Dashboard' : 'Show My Dashboard'}</span>
           </button>
@@ -265,7 +269,7 @@ const Journal = () => {
         {/* Website Achievements Section */}
         <section
           className={`section-card ${showWebsiteAchievements ? 'visible-section' : 'hidden-section'}`}
-          style={{ '--animation-delay': '0s' }} // Custom property for delay if needed
+          style={{ '--animation-delay': '0s' }}
         >
           <h2 className="section-title achievements">Website Achievements 🏆</h2>
           {websiteAchievementsLoading ? (
@@ -308,7 +312,7 @@ const Journal = () => {
         {/* User Dashboard Section */}
         <section
           className={`section-card ${showUserDashboard ? 'visible-section' : 'hidden-section'}`}
-          style={{ '--animation-delay': '0.1s' }} // Custom property for delay if needed
+          style={{ '--animation-delay': '0.1s' }}
         >
           <h2 className="section-title dashboard">My Dashboard ✨</h2>
           {userDashboardLoading ? (
@@ -479,7 +483,7 @@ const Journal = () => {
           <p className="cta-subtitle">
             🎁 New here? <span>Try a free 4-day trial</span> to explore all premium features, including advanced AI insights and exclusive tools!
           </p>
-          
+
           {/* Free Trial Button - Only show if not active or on trial */}
           {subscriptionStatus === "inactive" && (
             <button
@@ -533,7 +537,7 @@ const Journal = () => {
           <p className="cta-info-text">
             Elevate your self-care routine. Get unlimited AI support, deep mood analysis, and more with our flexible plans.
           </p>
-          
+
           {/* Directly embed Razorpay buttons */}
           <h3 className="subscription-plans-title">🪙 Choose Your Plan</h3>
           <div className="subscription-buttons-container">
